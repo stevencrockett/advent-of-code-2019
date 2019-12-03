@@ -20,7 +20,7 @@ def process_program(intcode_program: List[int]):
 
     while current_index < program_length:
         current_opcode = Opcode(intcode_program[current_index])
-        print(f'Current opcode: {current_opcode}')
+        # print(f'Current opcode: {current_opcode}')
         if current_opcode == Opcode.ADD:
             first_input_position, second_input_position, output_position = intcode_program[current_index + 1: current_index + 4]
             intcode_program[output_position] = intcode_program[first_input_position] + intcode_program[second_input_position]
@@ -33,19 +33,31 @@ def process_program(intcode_program: List[int]):
             break
 
 
+def run_program_with_parameters(original_program: List[int], noun: int, verb: int) -> int:
+    intcode_program = original_program.copy()
+    intcode_program[1] = noun
+    intcode_program[2] = verb
+    process_program(intcode_program)
+    return intcode_program[0]
+
+
 def main():
     path_to_program = 'day-2/day-2_input.txt'
     intcode_program = extract_program_from_file(path_to_program)
-    
-    # fudge the input program for part 1
-    intcode_program[1] = 12
-    intcode_program[2] = 2
 
-    process_program(intcode_program)
-    print(intcode_program)
+    part_1_answer = run_program_with_parameters(intcode_program, noun=12, verb=2)    
+    print(f'Part 1: {part_1_answer}')
 
+    def solve_part_2():
+        for noun in range(100):
+            for verb in range(100):
+                output = run_program_with_parameters(intcode_program, noun, verb)
+                if output == 19690720:
+                    return noun, verb
 
-
+    noun, verb = solve_part_2()
+    part_2_answer = (100 * noun) + verb
+    print(f'Part 2: {part_2_answer}')
 
 
 if __name__ == '__main__':
