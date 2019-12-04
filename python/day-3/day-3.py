@@ -12,24 +12,38 @@ def process_wire_path(wire_path: str):
 
 def generate_coordinates_for_path(path):
     x, y = 0, 0
-    coordinates = set()
+    cost = 0
+    coordinates = dict()
     for direction, distance in path:
         if direction == 'U':
             for i in range(distance):
                 y += 1
-                coordinates.add((x, y))
+                cost +=1
+                coordinate = (x, y)
+                if coordinate not in coordinates:
+                    coordinates[coordinate] = cost
+                   
         elif direction == 'D':
             for i in range(distance):
                 y -= 1
-                coordinates.add((x, y))
+                cost +=1
+                coordinate = (x, y)
+                if coordinate not in coordinates:
+                    coordinates[coordinate] = cost
         elif direction == 'L':
             for i in range(distance):
                 x -= 1
-                coordinates.add((x, y))
+                cost +=1
+                coordinate = (x, y)
+                if coordinate not in coordinates:
+                    coordinates[coordinate] = cost
         else:
             for i in range(distance):
                 x += 1
-                coordinates.add((x, y))
+                cost +=1
+                coordinate = (x, y)
+                if coordinate not in coordinates:
+                    coordinates[coordinate] = cost
     return coordinates
 
 
@@ -45,11 +59,13 @@ def main():
     steps_for_second_wire = steps_for_each_wire[1]
     coordinates_for_second_wire = generate_coordinates_for_path(steps_for_second_wire)
 
-    intersecting_points = coordinates_for_first_wire & coordinates_for_second_wire
+    intersecting_points = coordinates_for_first_wire.keys() & coordinates_for_second_wire.keys()
 
     smallest_manhattan_distance_from_origin = min([abs(x) + abs(y) for (x, y) in intersecting_points])
     print(smallest_manhattan_distance_from_origin)
 
+    minimal_cost_intersection = min([coordinates_for_first_wire[point] + coordinates_for_second_wire[point] for point in intersecting_points])
+    print(minimal_cost_intersection)
 
 if __name__ == '__main__':
     main()
